@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="TNScrollView">
+            <rect key="frame" x="0.0" y="0.0" width="356" height="157"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7OP-NZ-nlp">
+                    <rect key="frame" x="0.0" y="0.0" width="356" height="157"/>
+                    <animations/>
+                </scrollView>
+                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="ghr-2W-k2R">
+                    <rect key="frame" x="307" y="110" width="39" height="37"/>
+                    <animations/>
+                </pageControl>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="ghr-2W-k2R" secondAttribute="bottom" constant="10" id="05R-dA-0yJ"/>
+                <constraint firstItem="7OP-NZ-nlp" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="27w-F3-xwH"/>
+                <constraint firstAttribute="trailing" secondItem="ghr-2W-k2R" secondAttribute="trailing" constant="10" id="9Rc-lB-h0m"/>
+                <constraint firstAttribute="bottom" secondItem="7OP-NZ-nlp" secondAttribute="bottom" id="C3I-6u-BRp"/>
+                <constraint firstAttribute="trailing" secondItem="7OP-NZ-nlp" secondAttribute="trailing" id="Mn2-Yu-rqf"/>
+                <constraint firstItem="7OP-NZ-nlp" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="QOl-4M-rv5"/>
+                <constraint firstItem="7OP-NZ-nlp" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="UdL-5t-WjI"/>
+                <constraint firstItem="7OP-NZ-nlp" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="wck-fj-Hvs"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="pageControl" destination="ghr-2W-k2R" id="Pax-ur-ixN"/>
+                <outlet property="scrollView" destination="7OP-NZ-nlp" id="wjA-o0-ygn"/>
+            </connections>
+            <point key="canvasLocation" x="394" y="283.5"/>
+        </view>
+    </objects>
+</document>
