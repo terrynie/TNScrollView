@@ -13,6 +13,7 @@
 @interface TNScrollView () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIPageControl *pageControl;
+@property (retain, nonatomic) NSTimer *timer;
 @end
 
 
@@ -103,17 +104,26 @@
     }
 }
 
+//设置时间间隔
 -(void)setTimeInterval:(CGFloat)timeInterval {
     _timeInterval = timeInterval;
-    [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(changeOffset) userInfo:nil repeats:YES];
+    [self addTimer];
 }
 
 #pragma mark - <UIScrollViewDelegate>
-
+//手指滑动结束
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    //calculate the current page's index
+    //计算当前页号
     NSInteger currentPageIndex = (self.scrollView.contentOffset.x + (self.scrollView.frame.size.width / 2)) / self.scrollView.frame.size.width;
     self.pageControl.currentPage = currentPageIndex;
+    //重置定时器
+    [self addTimer];
+}
+
+//手指开始滑动
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    //使定时器失效
+    [self.timer invalidate];
 }
 
 #pragma mark - tool methods
@@ -137,19 +147,19 @@
     }
 }
 
--(void)scrollViewScrollWithStyle:(TNScrollViewScrollStyle)style {
-    if (style == TNScrollViewScrollStyleInfinite) {
-        //水平方向布局
-        if (self.dirction == TNScrollViewDirectionHorizontal) {
-            [self changeOffset];
-        }else if (self.dirction == TNScrollViewDirectionVertical) {
-            //垂直布局
-            [self changeOffset];
-        }
-    }else if (style == TNScrollViewScrollStyleReverse) {
-        
-    }
-}
+//-(void)scrollViewScrollWithStyle:(TNScrollViewScrollStyle)style {
+//    if (style == TNScrollViewScrollStyleInfinite) {
+//        //水平方向布局
+//        if (self.dirction == TNScrollViewDirectionHorizontal) {
+//            [self changeOffset];
+//        }else if (self.dirction == TNScrollViewDirectionVertical) {
+//            //垂直布局
+//            [self changeOffset];
+//        }
+//    }else if (style == TNScrollViewScrollStyleReverse) {
+//        
+//    }
+//}
 
 -(void)changeOffset {
     CGFloat width = self.scrollView.frame.size.width;
@@ -157,14 +167,9 @@
     CGFloat offsetX = self.scrollView.contentOffset.x;
     CGFloat offsetY = self.scrollView.contentOffset.y;
     CGPoint contentOffset;
-    CGFloat x , y;
-    if (_dirction == TNScrollViewDirectionVertical) {
-        x = 0;
-        y = height;
-    }else {
-        x = width;
-        y = 0;
-    }
+    CGFloat x = 0, y = 0;
+    self.dirction == TNScrollViewDirectionVertical ? (y = height) : (x = width);
+
     //判断当前页是否为最后一页
     if (offsetX < width * (self.images.count-1) && offsetY < height * (self.images.count-1)) {
         contentOffset = (CGPoint){offsetX + x, offsetY + y};
@@ -176,6 +181,10 @@
     [UIView animateWithDuration:1.5 animations:^{
         self.scrollView.contentOffset = contentOffset;
     }];
+}
+
+-(void)addTimer {
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(changeOffset) userInfo:nil repeats:YES];
 }
 
 @end
