@@ -14,13 +14,20 @@ typedef NS_ENUM(NSInteger, TNScrollViewDirection) {
     TNScrollViewDirectionHorizontal  //scrollView scroll on horizontal
 };
 
+typedef NS_ENUM(NSInteger, TNScrollViewScrollStyle) {
+    TNScrollViewScrollStyleInfinite, //infinite loop. when scroll to last view, next is first.
+    TNScrollViewScrollStyleReverse   //scroll from first to last one by one, then reverse the dirction, scroll from last one by one to first.
+};
+
 
 @interface TNScrollView : UIView
 //the images in ScrollView
 @property(nonatomic, retain) NSArray *images;
 //the scrollView scroll direction
 @property(nonatomic, assign) TNScrollViewDirection dirction;
+@property(nonatomic, assign) CGFloat timeInterval;   //please set timeInterval >0 ; scrollview change pages automatically after every timeInterval. 0 is not change automatically .
 
--(instancetype)init;
--(instancetype)initWithFrame:(CGRect)frame;
+
++(instancetype)scrollViewWithFrame:(CGRect)frame andDirection:(TNScrollViewDirection)direction;
+-(instancetype)initWithFrame:(CGRect)frame andDirection:(TNScrollViewDirection)direction;
 @end
