@@ -27,6 +27,7 @@
     [array addObject:@"img_03"];
     [array addObject:@"img_02"];
     [scrollview setImages:array];
+    [scrollview setTimeInterval:5.0];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -103,6 +103,11 @@
     }
 }
 
+-(void)setTimeInterval:(CGFloat)timeInterval {
+    _timeInterval = timeInterval;
+    [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(changeOffset) userInfo:nil repeats:YES];
+}
+
 #pragma mark - <UIScrollViewDelegate>
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -122,6 +127,55 @@
     for (; start < end; start++) {
         [subviews[start] setImage:[UIImage imageNamed:array[start]]];
     }
+}
+
+-(void)scrollViewScrollAutomaticallyInTimeInterval:(NSInteger)timeInterval withScrollStyle:(TNScrollViewScrollStyle)style {
+    if (self.timeInterval > 0 && style == TNScrollViewScrollStyleInfinite) {
+        
+    }else if (self.timeInterval > 0 && style == TNScrollViewScrollStyleReverse){
+        
+    }
+}
+
+-(void)scrollViewScrollWithStyle:(TNScrollViewScrollStyle)style {
+    if (style == TNScrollViewScrollStyleInfinite) {
+        //水平方向布局
+        if (self.dirction == TNScrollViewDirectionHorizontal) {
+            [self changeOffset];
+        }else if (self.dirction == TNScrollViewDirectionVertical) {
+            //垂直布局
+            [self changeOffset];
+        }
+    }else if (style == TNScrollViewScrollStyleReverse) {
+        
+    }
+}
+
+-(void)changeOffset {
+    CGFloat width = self.scrollView.frame.size.width;
+    CGFloat height = self.scrollView.frame.size.height;
+    CGFloat offsetX = self.scrollView.contentOffset.x;
+    CGFloat offsetY = self.scrollView.contentOffset.y;
+    CGPoint contentOffset;
+    CGFloat x , y;
+    if (_dirction == TNScrollViewDirectionVertical) {
+        x = 0;
+        y = height;
+    }else {
+        x = width;
+        y = 0;
+    }
+    //判断当前页是否为最后一页
+    if (offsetX < width * (self.images.count-1) && offsetY < height * (self.images.count-1)) {
+        contentOffset = (CGPoint){offsetX + x, offsetY + y};
+        self.pageControl.currentPage += 1;
+    }else {
+        contentOffset = (CGPoint){0,0};
+        self.pageControl.currentPage = 0;
+    }
+    [UIView animateWithDuration:1.5 animations:^{
+        self.scrollView.contentOffset = contentOffset;
+    }];
 }
 
 @end
