@@ -511,6 +511,7 @@
 				DE0A62A01CB936070065DBCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DE0A62A11CB936070065DBCF /* Build configuration list for PBXNativeTarget "TNScrollViewTests" */ = {
 			isa = XCConfigurationList;
@@ -519,6 +520,7 @@
 				DE0A62A31CB936070065DBCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DE0A62A41CB936070065DBCF /* Build configuration list for PBXNativeTarget "TNScrollViewUITests" */ = {
 			isa = XCConfigurationList;
@@ -527,6 +529,7 @@
 				DE0A62A61CB936070065DBCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
