@@ -13,6 +13,9 @@
 @interface TNScrollView () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIPageControl *pageControl;
+@property (strong, nonatomic) UIImageView *previousImage;
+@property (strong, nonatomic) UIImageView *currentImage;
+@property (strong, nonatomic) UIImageView *lastImage;
 @property (retain, nonatomic) NSTimer *timer;
 @end
 
@@ -65,8 +68,18 @@
 -(instancetype)initWithFrame:(CGRect)frame andDirection:(TNScrollViewDirection)direction {
     self = [self initWithFrame:frame];
     self.dirction = direction;
+    if (direction == TNScrollViewDirectionHorizontal) {
+        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x-self.scrollView.frame.size.width, frame.origin.y, frame.size.width, frame.size.height)];
+        self.previousImage = [[UIImageView alloc] initWithFrame:frame];
+        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x+self.scrollView.frame.size.width, frame.origin.y, frame.size.width, frame.size.height)];
+    }else if (direction == TNScrollViewDirectionVertical) {
+        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width, frame.origin.y-frame.size.height, frame.size.width, frame.size.height)];
+        self.previousImage = [[UIImageView alloc] initWithFrame:frame];
+        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width, frame.origin.y+frame.size.height, frame.size.width, frame.size.height)];
+    }
     return self;
 }
+
 
 #pragma mark - setMethod
 
@@ -87,20 +100,30 @@
         [self.scrollView setContentSize:(CGSize){width * self.images.count, height}];
     }
     
-    //load images
-    for (int i = 0; i < self.images.count; i++) {
-        UIImageView *imageView;
-        
-        //scroll on horizen or vertica direction
-        if (self.dirction == TNScrollViewDirectionVertical) {
-            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, i * height, width, height)];
-        }else {
-            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * width, 0, width, height)];
-        }
-        
-        //add imageView to ScrollView
-        imageView.image = [UIImage imageNamed:self.images[i]];
-        [self.scrollView addSubview:imageView];
+//    //load images
+//    for (int i = 0; i < self.images.count; i++) {
+//        UIImageView *imageView;
+//        
+//        //scroll on horizen or vertica direction
+//        if (self.dirction == TNScrollViewDirectionVertical) {
+//            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, i * height, width, height)];
+//        }else {
+//            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * width, 0, width, height)];
+//        }
+//        
+//        //add imageView to ScrollView
+//        imageView.image = [UIImage imageNamed:self.images[i]];
+//        [self.scrollView addSubview:imageView];
+//    }
+    
+    self.previousImage.image = [UIImage imageNamed:self.images[self.images.count-1]];
+    [self.scrollView addSubview:self.previousImage];
+    if (self.images.count == 2) {
+        self.currentImage.image = [UIImage imageNamed:self.images[0]];
+        [self.scrollView addSubview:self.currentImage];
+    }else if (self.images.count > 2) {
+        self.lastImage.image = [UIImage imageNamed:self.images[1]];
+        [self.scrollView addSubview:self.lastImage];
     }
 }
 
