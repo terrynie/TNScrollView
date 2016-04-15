@@ -23,11 +23,11 @@
     [self.view addSubview:scrollview];
     
     [array addObject:@"img_01"];
-    [array addObject:@"img_04"];
-    [array addObject:@"img_03"];
-    [array addObject:@"img_02"];
+//    [array addObject:@"img_04"];
+//    [array addObject:@"img_03"];
+//    [array addObject:@"img_02"];
     [scrollview setImages:array];
-    [scrollview setTimeInterval:3.0];UIAlertView;
+    [scrollview setTimeInterval:3.0];
 }
 
 - (void)didReceiveMemoryWarning {

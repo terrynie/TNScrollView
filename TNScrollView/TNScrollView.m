@@ -68,15 +68,13 @@
 -(instancetype)initWithFrame:(CGRect)frame andDirection:(TNScrollViewDirection)direction {
     self = [self initWithFrame:frame];
     self.dirction = direction;
-    if (direction == TNScrollViewDirectionHorizontal) {
-        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x-self.scrollView.frame.size.width, frame.origin.y, frame.size.width, frame.size.height)];
-        self.previousImage = [[UIImageView alloc] initWithFrame:frame];
-        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x+self.scrollView.frame.size.width, frame.origin.y, frame.size.width, frame.size.height)];
-    }else if (direction == TNScrollViewDirectionVertical) {
-        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width, frame.origin.y-frame.size.height, frame.size.width, frame.size.height)];
-        self.previousImage = [[UIImageView alloc] initWithFrame:frame];
-        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.scrollView.frame.size.width, frame.origin.y+frame.size.height, frame.size.width, frame.size.height)];
-    }
+    CGFloat width, height;
+    self.dirction == TNScrollViewDirectionHorizontal ? (height = 0) : (width = 0);
+    
+    self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x-width, frame.origin.y-height, frame.size.width, frame.size.height)];
+    self.previousImage = [[UIImageView alloc] initWithFrame:frame];
+    self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x+width, frame.origin.y+height, frame.size.width, frame.size.height)];
+  
     return self;
 }
 
@@ -94,10 +92,23 @@
     CGFloat height = self.scrollView.frame.size.height;
     
     //set scroll content size
-    if (self.dirction == TNScrollViewDirectionVertical) {
-        [self.scrollView setContentSize:(CGSize){width, height * self.images.count}];
+    if (self.images.count==1) {
+        [self.scrollView setContentSize:(CGSize){width, height}];
+        self.scrollView.contentOffset = CGPointMake(width, 0);
+    }else if (self.images.count == 2) {
+        if (self.dirction == TNScrollViewDirectionVertical) {
+            [self.scrollView setContentSize:(CGSize){width, 2*height}];
+            self.scrollView.contentOffset = CGPointMake(width, 0);
+        }else {
+            [self.scrollView setContentSize:(CGSize){2*width, height}];
+        }
     }else {
-        [self.scrollView setContentSize:(CGSize){width * self.images.count, height}];
+        if (self.dirction == TNScrollViewDirectionVertical) {
+            [self.scrollView setContentSize:(CGSize){width, 3*height}];
+            self.scrollView.contentOffset = CGPointMake(width, 0);
+        }else {
+            [self.scrollView setContentSize:(CGSize){3*width, height}];
+        }
     }
     
 //    //load images
@@ -118,13 +129,13 @@
     
     self.previousImage.image = [UIImage imageNamed:self.images[self.images.count-1]];
     [self.scrollView addSubview:self.previousImage];
-    if (self.images.count == 2) {
-        self.currentImage.image = [UIImage imageNamed:self.images[0]];
-        [self.scrollView addSubview:self.currentImage];
-    }else if (self.images.count > 2) {
-        self.lastImage.image = [UIImage imageNamed:self.images[1]];
-        [self.scrollView addSubview:self.lastImage];
-    }
+//    if (self.images.count == 2) {
+//        self.currentImage.image = [UIImage imageNamed:self.images[0]];
+//        [self.scrollView addSubview:self.currentImage];
+//    }else if (self.images.count > 2) {
+//        self.lastImage.image = [UIImage imageNamed:self.images[1]];
+//        [self.scrollView addSubview:self.lastImage];
+//    }
 }
 
 //设置时间间隔
