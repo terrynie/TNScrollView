@@ -22,10 +22,10 @@ typedef NS_ENUM(NSInteger, TNScrollViewScrollStyle) {
 
 @interface TNScrollView : UIView
 //the images in ScrollView
-@property(nonatomic, retain) NSArray *images;
-//the scrollView scroll direction
-@property(nonatomic, assign) TNScrollViewDirection dirction;
-@property(nonatomic, assign) CGFloat timeInterval;   //please set timeInterval >0 ; scrollview change pages automatically after every timeInterval. 0 is not change automatically .
+@property(nonatomic, retain)               NSArray *images;
+@property(nonatomic, assign) TNScrollViewDirection dirction;      //the scrollView scroll direction
+@property(nonatomic, assign)               CGFloat timeInterval;  //please set timeInterval >0 ; scrollview change pages automatically after every timeInterval. 0 is not change automatically .
+@property(nonatomic, assign) BOOL autoShow;                       //auto scroll or not
 
 
 +(instancetype)scrollViewWithFrame:(CGRect)frame andDirection:(TNScrollViewDirection)direction;

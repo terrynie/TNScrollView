@@ -17,6 +17,7 @@
 @property (strong, nonatomic) UIImageView *currentImage;
 @property (strong, nonatomic) UIImageView *lastImage;
 @property (retain, nonatomic) NSTimer *timer;
+@property (assign, nonatomic) NSInteger currentImageNo;
 @end
 
 
@@ -68,13 +69,6 @@
 -(instancetype)initWithFrame:(CGRect)frame andDirection:(TNScrollViewDirection)direction {
     self = [self initWithFrame:frame];
     self.dirction = direction;
-    CGFloat width, height;
-    self.dirction == TNScrollViewDirectionHorizontal ? (height = 0) : (width = 0);
-    
-    self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x-width, frame.origin.y-height, frame.size.width, frame.size.height)];
-    self.previousImage = [[UIImageView alloc] initWithFrame:frame];
-    self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x+width, frame.origin.y+height, frame.size.width, frame.size.height)];
-  
     return self;
 }
 
@@ -83,59 +77,58 @@
 
 -(void)setImages:(NSArray *)images {
     _images = images;
-    
-    //set pageControl's pages number
+
+    //设置pageControl的页数
     self.pageControl.numberOfPages = self.images.count;
-    //content width
-    CGFloat width = self.scrollView.frame.size.width;
-    //content height
+    //图片宽度
+    CGFloat width  = self.scrollView.frame.size.width;
+    //图片高度
     CGFloat height = self.scrollView.frame.size.height;
-    
-    //set scroll content size
-    if (self.images.count==1) {
-        [self.scrollView setContentSize:(CGSize){width, height}];
+    //设置默认首张图片编号为1
+    self.currentImageNo = 1;
+
+    CGFloat offsetX =  width, offsetY = height, offsetWidth = 0.0, offsetHeight = 0.0;
+    self.dirction   == TNScrollViewDirectionHorizontal ? (offsetY     = 0)     : (offsetX      = 0);
+    self.dirction   == TNScrollViewDirectionHorizontal ? (offsetWidth = width) : (offsetHeight = height);
+    CGRect frame    =  CGRectMake(offsetWidth, offsetHeight, width, height);
+
+    //设置显示的第一张图片
+    if (self.images.count == 1) {
         self.scrollView.contentOffset = CGPointMake(width, 0);
-    }else if (self.images.count == 2) {
-        if (self.dirction == TNScrollViewDirectionVertical) {
-            [self.scrollView setContentSize:(CGSize){width, 2*height}];
+        self.scrollView.scrollEnabled = NO;
+    } else {
+        //设置滚动范围
+        if (self.dirction == TNScrollViewDirectionHorizontal) {
+            [self.scrollView setContentSize:CGSizeMake(width * 3, height)];
             self.scrollView.contentOffset = CGPointMake(width, 0);
-        }else {
-            [self.scrollView setContentSize:(CGSize){2*width, height}];
+        } else if (self.dirction == TNScrollViewDirectionVertical) {
+            [self.scrollView setContentSize:CGSizeMake(width, 3 * height)];
+            self.scrollView.contentOffset = CGPointMake(0, height);
         }
-    }else {
-        if (self.dirction == TNScrollViewDirectionVertical) {
-            [self.scrollView setContentSize:(CGSize){width, 3*height}];
-            self.scrollView.contentOffset = CGPointMake(width, 0);
-        }else {
-            [self.scrollView setContentSize:(CGSize){3*width, height}];
-        }
+        self.previousImage = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x-offsetX, frame.origin.y-offsetY, frame.size.width, frame.size.height)];
+        self.lastImage     = [[UIImageView alloc] initWithFrame:CGRectMake(frame.origin.x+offsetX, frame.origin.y+offsetY, frame.size.width, frame.size.height)];
     }
     
-//    //load images
-//    for (int i = 0; i < self.images.count; i++) {
-//        UIImageView *imageView;
-//        
-//        //scroll on horizen or vertica direction
-//        if (self.dirction == TNScrollViewDirectionVertical) {
-//            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, i * height, width, height)];
-//        }else {
-//            imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * width, 0, width, height)];
-//        }
-//        
-//        //add imageView to ScrollView
-//        imageView.image = [UIImage imageNamed:self.images[i]];
-//        [self.scrollView addSubview:imageView];
-//    }
-    
+    //设置第一张图片
+    self.currentImage       = [[UIImageView alloc] initWithFrame:frame];
+    self.currentImage.image = [UIImage imageNamed:self.images[0]];
+    [self.scrollView addSubview:self.currentImage];
+    //初始化previousImage
     self.previousImage.image = [UIImage imageNamed:self.images[self.images.count-1]];
     [self.scrollView addSubview:self.previousImage];
-//    if (self.images.count == 2) {
-//        self.currentImage.image = [UIImage imageNamed:self.images[0]];
-//        [self.scrollView addSubview:self.currentImage];
-//    }else if (self.images.count > 2) {
-//        self.lastImage.image = [UIImage imageNamed:self.images[1]];
-//        [self.scrollView addSubview:self.lastImage];
-//    }
+
+    //初始化lastImage
+    if (self.images.count == 2) {
+        self.lastImage.image = [UIImage imageNamed:self.images[self.images.count-1]];
+    } else {
+        self.lastImage.image = [UIImage imageNamed:self.images[1]];
+    }
+    [self.scrollView addSubview:self.lastImage];
+    
+    if (self.autoShow) {
+        [self setTimeInterval: self.timeInterval];
+    }
+
 }
 
 //设置时间间隔
@@ -148,8 +141,11 @@
 //手指滑动结束
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     //计算当前页号
-    NSInteger currentPageIndex = (self.scrollView.contentOffset.x + (self.scrollView.frame.size.width / 2)) / self.scrollView.frame.size.width;
-    self.pageControl.currentPage = currentPageIndex;
+    if (self.scrollView.contentOffset.x < (self.scrollView.frame.size.width / 2)) {
+        self.pageControl.currentPage --;
+    }else if (self.scrollView.contentOffset.x < (self.scrollView.frame.size.width / 2)*5) {
+        self.pageControl.currentPage --;
+    }
     //重置定时器
     [self addTimer];
 }
@@ -162,59 +158,33 @@
 
 #pragma mark - tool methods
 
-/*!
- *  set subviews of scroll view to avoid memory leak
- *  @param subviews subviews of scrollView
- *  @param array    images array
- */
--(void)setSubviews:(NSMutableArray *)subviews fromIndex:(NSInteger)start toIndex:(NSInteger)end withArray:(NSArray *)array {
-    for (; start < end; start++) {
-        [subviews[start] setImage:[UIImage imageNamed:array[start]]];
-    }
-}
-
--(void)scrollViewScrollAutomaticallyInTimeInterval:(NSInteger)timeInterval withScrollStyle:(TNScrollViewScrollStyle)style {
-    if (self.timeInterval > 0 && style == TNScrollViewScrollStyleInfinite) {
-        
-    }else if (self.timeInterval > 0 && style == TNScrollViewScrollStyleReverse){
-        
-    }
-}
-
-//-(void)scrollViewScrollWithStyle:(TNScrollViewScrollStyle)style {
-//    if (style == TNScrollViewScrollStyleInfinite) {
-//        //水平方向布局
-//        if (self.dirction == TNScrollViewDirectionHorizontal) {
-//            [self changeOffset];
-//        }else if (self.dirction == TNScrollViewDirectionVertical) {
-//            //垂直布局
-//            [self changeOffset];
-//        }
-//    }else if (style == TNScrollViewScrollStyleReverse) {
-//        
-//    }
-//}
-
 -(void)changeOffset {
     CGFloat width = self.scrollView.frame.size.width;
     CGFloat height = self.scrollView.frame.size.height;
-    CGFloat offsetX = self.scrollView.contentOffset.x;
-    CGFloat offsetY = self.scrollView.contentOffset.y;
+    CGFloat offsetX = self.currentImage.frame.origin.x;
+    CGFloat offsetY = self.currentImage.frame.origin.y;
+
     CGPoint contentOffset;
     CGFloat x = 0, y = 0;
     self.dirction == TNScrollViewDirectionVertical ? (y = height) : (x = width);
 
-    //判断当前页是否为最后一页
-    if (offsetX < width * (self.images.count-1) && offsetY < height * (self.images.count-1)) {
-        contentOffset = (CGPoint){offsetX + x, offsetY + y};
-        self.pageControl.currentPage += 1;
-    }else {
-        contentOffset = (CGPoint){0,0};
-        self.pageControl.currentPage = 0;
-    }
+    contentOffset = (CGPoint) {offsetX + x, offsetY + y};
+    //计算当前页是第几页
+    self.pageControl.currentPage = self.currentImageNo % self.images.count;
+    //设置当前指向第几张图片
+    self.currentImageNo = (self.currentImageNo+1) % self.images.count;
+    
     [UIView animateWithDuration:1.5 animations:^{
         self.scrollView.contentOffset = contentOffset;
     }];
+    
+    //重设scrollView中的各个image
+    self.currentImage.image = [UIImage imageNamed:self.images[self.currentImageNo]];
+    self.scrollView.contentOffset = (CGPoint){offsetX, offsetY};
+    self.previousImage.image = [UIImage imageNamed:self.images[(self.currentImageNo-1+self.images.count) % self.images.count]];
+    self.lastImage.image = [UIImage imageNamed:self.images[(self.currentImageNo+1) % self.images.count]];
+    
+    
 }
 
 -(void)addTimer {

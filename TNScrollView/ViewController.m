@@ -17,17 +17,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    TNScrollView *scrollview = [[TNScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 200) andDirection:TNScrollViewDirectionHorizontal];
+    TNScrollView *scrollview = [[TNScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 200) andDirection: TNScrollViewDirectionHorizontal];
     
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [[NSMutableArray alloc] initWithObjects:@"img_01",@"img_02", @"img_03", @"img_04", nil];
     [self.view addSubview:scrollview];
-    
-    [array addObject:@"img_01"];
-//    [array addObject:@"img_04"];
-//    [array addObject:@"img_03"];
-//    [array addObject:@"img_02"];
+
     [scrollview setImages:array];
-    [scrollview setTimeInterval:3.0];
+    [scrollview setTimeInterval:5];
 }
 
 - (void)didReceiveMemoryWarning {

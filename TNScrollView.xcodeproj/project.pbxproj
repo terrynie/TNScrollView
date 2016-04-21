@@ -87,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				DE0A62731CB936070065DBCF /* TNScrollView */,
-				DE0A628D1CB936070065DBCF /* TNScrollViewTests */,
 				DE0A62981CB936070065DBCF /* TNScrollViewUITests */,
 				DE0A62721CB936070065DBCF /* Products */,
 			);
@@ -118,6 +117,7 @@
 				DE0A62A71CB936350065DBCF /* TNScrollView.h */,
 				DE0A62AA1CB936590065DBCF /* TNScrollView.xib */,
 				DE0A62A81CB936350065DBCF /* TNScrollView.m */,
+				DE0A628D1CB936070065DBCF /* TNScrollViewTests */,
 			);
 			path = TNScrollView;
 			sourceTree = "<group>";
@@ -137,7 +137,7 @@
 				DE0A62901CB936070065DBCF /* Info.plist */,
 			);
 			path = TNScrollViewTests;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		DE0A62981CB936070065DBCF /* TNScrollViewUITests */ = {
 			isa = PBXGroup;
@@ -426,7 +426,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = TNScrollView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.terry.TNScrollView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -437,7 +439,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = TNScrollView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.terry.TNScrollView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
