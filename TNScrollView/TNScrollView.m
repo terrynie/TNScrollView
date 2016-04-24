@@ -19,9 +19,9 @@
 @property (retain, nonatomic) NSTimer     *timer;
 @property (assign, nonatomic) NSInteger   currentImageNo;
 
-@property(assign, nonatomic)  CGFloat     width   ;   
-@property(assign, nonatomic)  CGFloat     height  ;  
-@property(assign, nonatomic)  CGFloat     offsetX ; 
+@property(assign, nonatomic)  CGFloat     width   ;
+@property(assign, nonatomic)  CGFloat     height  ;
+@property(assign, nonatomic)  CGFloat     offsetX ;
 @property(assign, nonatomic)  CGFloat     offsetY ;
 @property(assign, nonatomic)  NSInteger   count   ;
 @end
@@ -53,6 +53,7 @@
         self = [[[NSBundle mainBundle] loadNibNamed:@"TNScrollView" owner:nil options:nil] lastObject];
         self.frame = frame;
         self.scrollView.frame = self.bounds;
+        self.scrollView.pagingEnabled = YES;
         //set TNScrollView as scrollView's delegate
         self.scrollView.delegate = self;
     }
@@ -74,21 +75,21 @@
 -(void)setImages:(NSArray *)images {
     _images = images;
     _count = _images.count;
-
+    
     //设置pageControl的页数
     self.pageControl.numberOfPages = _count;
     //imageView宽度
     _width   = self.scrollView.frame.size.width ;
     //imageView高度
     _height  = self.scrollView.frame.size.height;
-    //设置默认首张图片编号为1
+    //设置默认首张图片编号为0
     self.currentImageNo = 0;
-
-    CGFloat offsetX = _width, 
-            offsetY = _height;
+    
+    CGFloat offsetX = _width,
+    offsetY = _height;
     self.dirction   == TNScrollViewDirectionHorizontal ? (offsetY = 0) : (offsetX = 0);
     CGRect frame    =  CGRectMake(offsetX, offsetY, _width, _height);
-
+    
     //判断图片总数
     if (_count == 1) {
         self.scrollView.contentOffset = CGPointMake(_width, 0);
@@ -143,9 +144,31 @@
 #pragma mark - <UIScrollViewDelegate>
 //手指滑动结束
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    NSLog(@"%s---%f,%f",__func__,self.scrollView.contentOffset.x,self.scrollView.contentOffset.y);
+    CGFloat scrollOffset; //滚动后的contentOffset
+    CGFloat offset;       //如果布局为水平布局offset=_width，如果是垂直布局offset=_height
+    self.dirction == TNScrollViewDirectionHorizontal ? (scrollOffset = self.scrollView.contentOffset.x, offset = _width) : (scrollOffset = self.scrollView.contentOffset.y, offset = _height);
+    NSLog(@"%f,%f,%ld",scrollOffset,offset,self.currentImageNo);
+    
+    if (scrollOffset < (offset/2)) {
+        if (self.currentImageNo == (0)) {
+            self.currentImageNo = _count-1;
+        }else {
+            self.currentImageNo --;
+        }
+        
+    }else if (scrollOffset > (offset/2)*3) {
+        if (self.currentImageNo == (_count-1)) {
+            self.currentImageNo = 0;
+        }else {
+            self.currentImageNo ++;
+        }
+    }
+    
     [self fixImageView];
     //重置定时器
     [self addTimer];
+    NSLog(@"%ld",self.currentImageNo);
 }
 
 //手指开始滑动
@@ -163,18 +186,17 @@
     self.dirction == TNScrollViewDirectionVertical ? (y = _height) : (x = _width);
     //下一页的offset
     contentOffset = (CGPoint) {_offsetX + x, _offsetY + y};
-    //设置pagecontrol当前页是第几页
-    self.pageControl.currentPage = self.currentImageNo;
     
     [UIView animateWithDuration:1.5 animations:^{
         self.scrollView.contentOffset = contentOffset;
     }];
-
+    
     if (self.currentImageNo == (_count-1)) {
         self.currentImageNo = 0;
     }else {
         self.currentImageNo ++;
     }
+    //设置pagecontrol当前页是第几页
     self.pageControl.currentPage = self.currentImageNo;
     
     [self fixImageView];
@@ -182,9 +204,11 @@
 
 //修正图片视图
 -(void)fixImageView {
+    self.pageControl.currentPage = self.currentImageNo;
     //重设scrollView中的各个image
     self.currentImage.image = [UIImage imageNamed:self.images[self.currentImageNo]];
     self.scrollView.contentOffset = (CGPoint){_offsetX, _offsetY};
+    
     self.previousImage.image = [UIImage imageNamed:self.images[(self.currentImageNo-1+_count) % _count]];
     self.lastImage.image = [UIImage imageNamed:self.images[(self.currentImageNo+1) % _count]];
 }
