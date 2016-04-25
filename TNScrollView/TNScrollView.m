@@ -165,7 +165,10 @@
         }
     }
     
-    [self fixImageView];
+    //获取主队列，在主线程中更新UI，之前在这里被坑了。。。
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self fixImageView];
+    });
     //重置定时器
     [self addTimer];
     NSLog(@"%ld",self.currentImageNo);
@@ -196,14 +199,13 @@
     }else {
         self.currentImageNo ++;
     }
-    //设置pagecontrol当前页是第几页
-    self.pageControl.currentPage = self.currentImageNo;
     
     [self fixImageView];
 }
 
 //修正图片视图
 -(void)fixImageView {
+    //设置pagecontrol当前页是第几页
     self.pageControl.currentPage = self.currentImageNo;
     //重设scrollView中的各个image
     self.currentImage.image = [UIImage imageNamed:self.images[self.currentImageNo]];
